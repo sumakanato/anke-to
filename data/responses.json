@@ -1,0 +1,30 @@
+[
+  {
+    "id": "32bdc3b8-e249-4b21-8753-48e3c84d9a87",
+    "createdAt": "2026-07-06T01:29:43.889Z",
+    "evaluator": "",
+    "group": "",
+    "answers": [
+      {
+        "sampleId": "ee35c411-1912-458d-9c9b-0db2bc86bb3f",
+        "synthesisQuality": 1,
+        "timbreAccuracy": 1,
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "id": "7c3e52f9-4687-4cd0-9dff-c33e31e129fc",
+    "createdAt": "2026-07-06T01:31:09.540Z",
+    "evaluator": "",
+    "group": "",
+    "answers": [
+      {
+        "sampleId": "ee35c411-1912-458d-9c9b-0db2bc86bb3f",
+        "synthesisQuality": 2,
+        "timbreAccuracy": 2,
+        "comment": ""
+      }
+    ]
+  }
+]
