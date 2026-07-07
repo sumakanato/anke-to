@@ -67,3 +67,90 @@ vercel --prod
 ```
 
 公開後は `/admin` からログインし、mp3 や mov を追加してください。
+
+## Cloudflare で公開する準備
+
+Cloudflare では以下の構成を使います。
+
+- Cloudflare Pages: 画面の公開
+- Pages Functions: `/api/...` と `/media/...`
+- D1: 回答結果とメディア一覧
+- R2: mp3 / mov などのメディアファイル
+
+### 1. D1 database を作る
+
+Cloudflare Dashboard で `Workers & Pages` → `D1 SQL Database` から database を作成します。
+
+ローカルに Wrangler がある場合は以下でも作れます。
+
+```sh
+npx wrangler d1 create evaluation-survey
+```
+
+作成した D1 に [schema.cloudflare.sql](./schema.cloudflare.sql) を実行します。
+
+```sh
+npx wrangler d1 execute evaluation-survey --file=./schema.cloudflare.sql --remote
+```
+
+### 2. R2 bucket を作る
+
+Cloudflare Dashboard で `R2 Object Storage` から `survey-media` という bucket を作成します。
+
+このサイトでは `/media/...` の Pages Function 経由で R2 のファイルを配信するため、R2 bucket を public にする必要はありません。
+
+### 3. Pages project を作る
+
+Cloudflare Pages で GitHub repository を接続します。
+
+設定値:
+
+```text
+Framework preset: None
+Build command: なし
+Build output directory: public
+Root directory: /
+```
+
+### 4. Bindings と環境変数を設定する
+
+Pages project の `Settings` → `Functions` で bindings を追加します。
+
+```text
+D1 database binding
+Variable name: DB
+Database: 作成した D1
+
+R2 bucket binding
+Variable name: MEDIA_BUCKET
+Bucket: survey-media
+```
+
+`Settings` → `Environment variables` で以下を追加します。
+
+```text
+ADMIN_PASSWORD=管理画面ログイン用の好きなパスワード
+ADMIN_SESSION_SECRET=ランダムな長い文字列
+```
+
+`ADMIN_SESSION_SECRET` は長めのランダム文字列にしてください。
+
+```sh
+openssl rand -base64 32
+```
+
+### 5. 公開後の使い方
+
+- 回答画面: `https://あなたのサイト.pages.dev/`
+- 管理画面: `https://あなたのサイト.pages.dev/admin`
+
+管理画面でログインし、mp3 / mov を追加すると R2 に保存されます。回答結果は D1 に保存され、管理画面から確認・CSV 出力できます。
+
+### Wrangler でローカル確認する場合
+
+[wrangler.example.toml](./wrangler.example.toml) を `wrangler.toml` にコピーし、`database_id` を自分の D1 database ID に変更します。
+
+```sh
+cp wrangler.example.toml wrangler.toml
+npx wrangler pages dev public
+```

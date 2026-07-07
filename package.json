@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "cloudflare:dev": "npx wrangler pages dev public",
+    "cloudflare:schema": "npx wrangler d1 execute evaluation-survey --file=./schema.cloudflare.sql --remote"
   },
   "engines": {
     "node": ">=18"
