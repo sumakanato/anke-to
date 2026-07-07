@@ -1,0 +1,1 @@
+deploy-check: kanri-admin-file-test-2026-07-07
